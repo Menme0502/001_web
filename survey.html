@@ -573,16 +573,19 @@
 
       const data = getData();
 
+      alert('GAS URL: ' + CONFIG.gasEndpoint);
       if (CONFIG.gasEndpoint) {
         try {
-          await fetch(CONFIG.gasEndpoint, {
-            method: 'POST', mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
+          const resp = await fetch(CONFIG.gasEndpoint, {
+            method: 'POST',
             body: JSON.stringify(data),
           });
-        } catch (e) { console.warn('Submit error:', e); }
+          alert('送信完了: ' + resp.status);
+        } catch (e) {
+          alert('送信エラー: ' + e.message);
+        }
       } else {
-        console.log('Survey data:', data);
+        alert('GAS未設定');
       }
 
       // 判定: ポジティブ条件
