@@ -238,7 +238,7 @@ async function send() {
     try {
       await fetch(CONFIG.gasEndpoint, {
         method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(data),
       });
     } catch (e) { console.warn('Submit error:', e); }

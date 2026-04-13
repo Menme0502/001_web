@@ -573,19 +573,15 @@
 
       const data = getData();
 
-      alert('GAS URL: ' + CONFIG.gasEndpoint);
       if (CONFIG.gasEndpoint) {
         try {
-          const resp = await fetch(CONFIG.gasEndpoint, {
+          await fetch(CONFIG.gasEndpoint, {
             method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(data),
           });
-          alert('送信完了: ' + resp.status);
-        } catch (e) {
-          alert('送信エラー: ' + e.message);
-        }
-      } else {
-        alert('GAS未設定');
+        } catch (e) { /* silent */ }
       }
 
       // 判定: ポジティブ条件
