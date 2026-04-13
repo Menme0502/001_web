@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精密少女シミュレーター - バグ報告</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Segoe UI','Hiragino Sans','Noto Sans JP',sans-serif;
+    background:#131316;color:#ccc8c0;
+    min-height:100vh;
+    padding:3rem 1rem;
+    line-height:1.8;
+    font-size:15px;
+  }
+  .wrap{max-width:520px;margin:0 auto;}
+
+  h1{font-size:1.15rem;font-weight:600;color:#e8e4dc;margin-bottom:0.3rem;}
+  .lead{font-size:0.85rem;color:#888480;margin-bottom:2.5rem;}
+
+  .field{margin-bottom:1.8rem;}
+  .label{
+    font-size:0.92rem;font-weight:500;color:#dad6ce;
+    margin-bottom:0.6rem;
+  }
+  .label .req{color:#b07060;font-size:0.8rem;margin-left:6px;}
+  .note{font-size:0.8rem;color:#787470;margin-bottom:0.8rem;}
+
+  input[type="text"],input[type="email"]{
+    width:100%;padding:10px 14px;
+    background:#16161c;border:1px solid #26262e;
+    border-radius:6px;color:#ccc8c0;
+    font-size:0.9rem;font-family:inherit;
+  }
+  input:focus{outline:none;border-color:#7a6a50;}
+  input::placeholder{color:#555;}
+
+  textarea{
+    width:100%;height:160px;
+    background:#16161c;border:1px solid #26262e;
+    border-radius:6px;color:#ccc8c0;
+    padding:12px;font-size:0.9rem;font-family:inherit;
+    resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:#7a6a50;}
+  textarea::placeholder{color:#555;}
+
+  .opts{display:flex;flex-direction:column;gap:6px;}
+  .opts.row{flex-direction:row;flex-wrap:wrap;gap:8px;}
+  .opt{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;
+    background:#1a1a20;border:1px solid #26262e;
+    border-radius:6px;cursor:pointer;
+    transition:border-color 0.15s,background 0.15s;
+    font-size:0.9rem;
+  }
+  .opt:hover{border-color:#3a3a44;}
+  .opt.on{border-color:#8a7a60;background:#1e1d1a;}
+  .opt input{display:none;}
+  .dot{
+    width:16px;height:16px;border-radius:50%;
+    border:2px solid #3a3a44;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color 0.15s;
+  }
+  .opt.on .dot{border-color:#a09070;}
+  .opt.on .dot::after{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:#a09070;
+  }
+
+  .opts.row .opt{flex:0 0 auto;padding:8px 16px;}
+
+  .urg-high{border-color:#805050 !important;background:#1e1818 !important;}
+  .urg-high .dot{border-color:#a06060 !important;}
+  .urg-high .dot::after{background:#a06060 !important;}
+
+  .btns{display:flex;gap:10px;justify-content:flex-end;margin-top:2rem;}
+  .btn{
+    padding:9px 24px;border-radius:6px;
+    border:none;font-size:0.9rem;font-weight:500;
+    cursor:pointer;font-family:inherit;transition:opacity 0.15s;
+  }
+  .btn:hover{opacity:0.85;}
+  .btn-go{background:#8a7a60;color:#fff;}
+  .btn-go:disabled{opacity:0.3;cursor:default;}
+
+  .done{text-align:center;padding:3rem 0;display:none;}
+  .done.active{display:block;}
+  .done h2{font-size:1.15rem;font-weight:600;color:#e0dcd4;margin-bottom:1rem;}
+  .done p{font-size:0.9rem;color:#888480;line-height:1.9;}
+
+  .form.hidden{display:none;}
+
+  .sep{border:none;border-top:1px solid #222228;margin:1.8rem 0;}
+
+  @media(max-width:480px){
+    body{padding:1.5rem 1rem;}
+    .opts.row{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>バグ報告</h1>
+  <p class="lead">不具合を見つけた場合はこちらからご報告ください。修正の参考にさせていただきます。</p>
+
+  <div class="form" id="formArea">
+
+    <div class="field">
+      <div class="label">ご連絡先<span class="req">任意</span></div>
+      <div class="note">返信が必要な場合はメールアドレスやX(Twitter)アカウントをご記入ください</div>
+      <input type="text" id="contact" placeholder="例: @username / mail@example.com">
+    </div>
+
+    <div class="field">
+      <div class="label">バグのジャンル</div>
+      <div class="opts" id="catOpts">
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="クラッシュ・フリーズ">
+          <span class="dot"></span>クラッシュ・フリーズ
+        </label>
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="表示・描画の異常">
+          <span class="dot"></span>表示・描画の異常
+        </label>
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="音声の問題">
+          <span class="dot"></span>音声の問題
+        </label>
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="操作・入力">
+          <span class="dot"></span>操作・入力
+        </label>
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="パフォーマンス">
+          <span class="dot"></span>パフォーマンス（カクつき等）
+        </label>
+        <label class="opt" onclick="radio(this,'cat')">
+          <input type="radio" name="cat" value="その他">
+          <span class="dot"></span>その他
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="label">緊急度</div>
+      <div class="opts row" id="urgOpts">
+        <label class="opt" onclick="selUrg(this,'urg')">
+          <input type="radio" name="urg" value="低（軽微）">
+          <span class="dot"></span>低
+        </label>
+        <label class="opt" onclick="selUrg(this,'urg')">
+          <input type="radio" name="urg" value="中（気になる）">
+          <span class="dot"></span>中
+        </label>
+        <label class="opt" onclick="selUrg(this,'urg')">
+          <input type="radio" name="urg" value="高（機能に支障）">
+          <span class="dot"></span>高
+        </label>
+        <label class="opt" onclick="selUrg(this,'urg')">
+          <input type="radio" name="urg" value="緊急（プレイ不能）">
+          <span class="dot"></span>緊急
+        </label>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="field">
+      <div class="label">内容</div>
+      <div class="note">どんな操作をしたとき、何が起きたかをできるだけ詳しくお書きください</div>
+      <textarea id="detail" placeholder="例: モーション切替直後に画面が真っ暗になり、5秒ほどフリーズした"></textarea>
+    </div>
+
+    <div class="btns">
+      <button class="btn btn-go" id="sendBtn" onclick="send()">送信する</button>
+    </div>
+  </div>
+
+  <div class="done" id="doneArea">
+    <h2>ご報告ありがとうございます</h2>
+    <p>いただいた内容を確認し、修正に取り組みます。</p>
+  </div>
+
+</div>
+
+<script>
+const CONFIG = {
+  gasEndpoint: '',  // GAS Web App URL（survey.htmlと同じでOK）
+};
+
+function radio(el, name) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(inp => {
+    inp.closest('.opt').classList.remove('on');
+    inp.closest('.opt').classList.remove('urg-high');
+  });
+  el.querySelector('input').checked = true;
+  el.classList.add('on');
+}
+
+function selUrg(el, name) {
+  radio(el, name);
+  const v = el.querySelector('input').value;
+  if (v.includes('高') || v.includes('緊急')) {
+    el.classList.add('urg-high');
+  }
+}
+
+async function send() {
+  const cat = document.querySelector('input[name="cat"]:checked');
+  const urg = document.querySelector('input[name="urg"]:checked');
+  const detail = document.getElementById('detail').value.trim();
+
+  if (!detail) {
+    alert('内容を入力してください');
+    return;
+  }
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.textContent = '送信中...';
+
+  const data = {
+    type: 'bug_report',
+    contact: document.getElementById('contact').value.trim(),
+    category: cat ? cat.value : '未選択',
+    urgency: urg ? urg.value : '未選択',
+    detail: detail,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent,
+  };
+
+  if (CONFIG.gasEndpoint) {
+    try {
+      await fetch(CONFIG.gasEndpoint, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (e) { console.warn('Submit error:', e); }
+  } else {
+    console.log('Bug report data:', data);
+  }
+
+  document.getElementById('formArea').classList.add('hidden');
+  document.getElementById('doneArea').classList.add('active');
+}
+</script>
+</body>
+</html>
