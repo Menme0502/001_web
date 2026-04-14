@@ -103,6 +103,9 @@
 </style>
 </head>
 <body>
+<input type="text" id="website" name="website" tabindex="-1" autocomplete="off"
+  style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+
 <div class="wrap">
 
   <h1>バグ報告</h1>
@@ -220,6 +223,20 @@ async function send() {
     return;
   }
 
+  // ハニーポット
+  const honey = document.getElementById('website').value;
+  if (honey) {
+    showDone();
+    return;
+  }
+
+  // localStorage: 連投制限（バグ報告は緩めに5分）
+  const last = parseInt(localStorage.getItem('bug_sent') || '0');
+  if (Date.now() - last < 5 * 60 * 1000) {
+    alert('送信できるのは5分に1回までです');
+    return;
+  }
+
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
   btn.textContent = '送信中...';
@@ -232,6 +249,7 @@ async function send() {
     detail: detail,
     timestamp: new Date().toISOString(),
     userAgent: navigator.userAgent,
+    fp: getFingerprint(),
   };
 
   if (CONFIG.gasEndpoint) {
@@ -241,13 +259,27 @@ async function send() {
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(data),
       });
-    } catch (e) { console.warn('Submit error:', e); }
-  } else {
-    console.log('Bug report data:', data);
+      localStorage.setItem('bug_sent', Date.now());
+    } catch (e) { /* silent */ }
   }
 
+  showDone();
+}
+
+function showDone() {
   document.getElementById('formArea').classList.add('hidden');
   document.getElementById('doneArea').classList.add('active');
+}
+
+function getFingerprint() {
+  const s = navigator.userAgent + '|' + screen.width + 'x' + screen.height + '|' +
+            new Date().getTimezoneOffset() + '|' + navigator.language;
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i);
+    h |= 0;
+  }
+  return h.toString(36);
 }
 </script>
 </body>

@@ -324,6 +324,10 @@
 </head>
 
 <body>
+  <!-- ハニーポット（bot対策・人間には見えない） -->
+  <input type="text" id="website" name="website" tabindex="-1" autocomplete="off"
+    style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+
   <div class="wrap">
 
     <h1>精密少女シミュレーター</h1>
@@ -573,6 +577,23 @@
 
       const data = getData();
 
+      // ハニーポット: botは非表示フィールドを埋めてしまう
+      const honey = document.getElementById('website').value;
+      if (honey) {
+        // botと判定 → 送信せず成功表示
+        showResult(data);
+        return;
+      }
+
+      // localStorage: 同じブラウザから複数回送信を防止
+      if (localStorage.getItem('survey_sent')) {
+        showResult(data);
+        return;
+      }
+
+      // フィンガープリント: サーバー側の時間制限用
+      data.fp = getFingerprint();
+
       if (CONFIG.gasEndpoint) {
         try {
           await fetch(CONFIG.gasEndpoint, {
@@ -581,9 +602,14 @@
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify(data),
           });
+          localStorage.setItem('survey_sent', Date.now());
         } catch (e) { /* silent */ }
       }
 
+      showResult(data);
+    }
+
+    function showResult(data) {
       // 判定: ポジティブ条件
       //  - 気に入った要素 2つ以上
       //  - 気に入った自由記述あり
@@ -600,6 +626,17 @@
       } else {
         document.getElementById('sNeu').classList.add('active');
       }
+    }
+
+    function getFingerprint() {
+      const s = navigator.userAgent + '|' + screen.width + 'x' + screen.height + '|' +
+                new Date().getTimezoneOffset() + '|' + navigator.language;
+      let h = 0;
+      for (let i = 0; i < s.length; i++) {
+        h = ((h << 5) - h) + s.charCodeAt(i);
+        h |= 0;
+      }
+      return h.toString(36);
     }
   </script>
 </body>
