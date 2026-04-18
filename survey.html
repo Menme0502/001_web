@@ -657,8 +657,9 @@
         return;
       }
 
-      // localStorage: 同じブラウザから複数回送信を防止
-      if (localStorage.getItem('survey_sent')) {
+      // localStorage: 同じブラウザから1時間以内の再送信を防止
+      var lastSent = parseInt(localStorage.getItem('survey_sent') || '0');
+      if (Date.now() - lastSent < 60 * 60 * 1000) {
         showResult(data);
         return;
       }
