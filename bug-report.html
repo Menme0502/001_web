@@ -94,6 +94,8 @@
 
   .form.hidden{display:none;}
 
+  .q-sub{font-size:0.85rem;color:#a09c94;margin-bottom:0.5rem;margin-top:0.8rem;}
+
   .sep{border:none;border-top:1px solid #222228;margin:1.8rem 0;}
 
   @media(max-width:480px){
@@ -178,6 +180,43 @@
     <hr class="sep">
 
     <div class="field">
+      <div class="label">使用環境</div>
+      <div class="note">問題の再現に役立ちます。わかる範囲でお選びください</div>
+      <div class="q-sub">VRヘッドセット</div>
+      <div class="opts" id="hmdOpts">
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest 3"><span class="dot"></span>Meta Quest 3</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest 2"><span class="dot"></span>Meta Quest 2</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest Pro"><span class="dot"></span>Meta Quest Pro</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Valve Index"><span class="dot"></span>Valve Index</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="HTC Vive"><span class="dot"></span>HTC Vive系</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="その他"><span class="dot"></span>その他</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="q-sub">接続方式</div>
+      <div class="opts" id="connOpts">
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Quest Link (USB)"><span class="dot"></span>Quest Link（USB接続）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Air Link"><span class="dot"></span>Air Link（ワイヤレス）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Virtual Desktop"><span class="dot"></span>Virtual Desktop</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="SteamVR直接"><span class="dot"></span>SteamVR（PC直接接続）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="ALVR"><span class="dot"></span>ALVR</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="わからない"><span class="dot"></span>よくわからない</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="q-sub">起動方法</div>
+      <div class="opts" id="launchOpts">
+        <label class="opt" onclick="radio(this,'launch')"><input type="radio" name="launch" value="exeダブルクリック"><span class="dot"></span>exeファイルを直接起動</label>
+        <label class="opt" onclick="radio(this,'launch')"><input type="radio" name="launch" value="Steam経由"><span class="dot"></span>Steamに追加して起動</label>
+        <label class="opt" onclick="radio(this,'launch')"><input type="radio" name="launch" value="その他"><span class="dot"></span>その他</label>
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="field">
       <div class="label">内容</div>
       <div class="note">どんな操作をしたとき、何が起きたかをできるだけ詳しくお書きください</div>
       <textarea id="detail" placeholder="例: モーション切替直後に画面が真っ暗になり、5秒ほどフリーズした"></textarea>
@@ -245,9 +284,16 @@ async function send() {
   btn.disabled = true;
   btn.textContent = '送信中...';
 
+  const hmd = document.querySelector('input[name="hmd"]:checked');
+  const conn = document.querySelector('input[name="conn"]:checked');
+  const launch = document.querySelector('input[name="launch"]:checked');
+
   const data = {
     type: 'bug_report',
     contact: document.getElementById('contact').value.trim(),
+    headset: hmd ? hmd.value : '未選択',
+    connection: conn ? conn.value : '未選択',
+    launchMethod: launch ? launch.value : '未選択',
     category: cat ? cat.value : '未選択',
     urgency: urg ? urg.value : '未選択',
     detail: detail,

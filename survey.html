@@ -311,6 +311,48 @@
       color: #a09888;
     }
 
+    .rank-item {
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+
+    .rank-item:active {
+      transform: scale(0.98);
+    }
+
+    .rank-item.ranked {
+      border-color: #8a7a60;
+      background: #1e1d1a;
+    }
+
+    .rank-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #3a3a44;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #555;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .rank-item.ranked .rank-num {
+      border-color: #a09070;
+      background: #a09070;
+      color: #131316;
+    }
+
+    .rank-item.maxed {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
     @media(max-width:480px) {
       body {
         padding: 1.5rem 1rem;
@@ -359,13 +401,14 @@
 
       <hr class="sep">
 
-      <div class="q-label">連動デバイス（電動のもの）はお持ちですか？</div>
+      <div class="q-label">電動連動デバイスをお使いですか？</div>
+      <div class="q-note">動作確認済み: The Handy / U.F.O. TW / A10 Cyclone SA+ / A10 Piston SA+<br>※Intiface Central対応デバイスであれば上記以外でも動作する可能性があります</div>
       <div class="opts">
         <label class="opt" onclick="radio(this,'toy');toggleSub(true)"><input type="radio" name="toy"
-            value="持っている"><span class="dot"></span>持っている</label>
+            value="使っている"><span class="dot"></span>使っている</label>
       </div>
       <div class="sub-input" id="toySub" style="display:none">
-        <input type="text" id="toyName" placeholder="デバイス名（任意）例: The Handy, U.F.O. SA 等">
+        <input type="text" id="toyName" placeholder="動作確認済みデバイス名（任意）例: The Handy, A10 Piston SA+ 等">
       </div>
       <div class="opts">
         <label class="opt" onclick="radio(this,'toy');toggleSub(false)"><input type="radio" name="toy"
@@ -394,27 +437,19 @@
       </div>
     </div>
 
-    <!-- Step 2: 気に入った要素 -->
+    <!-- Step 2: 気に入った要素（ランキング） -->
     <div class="step" id="s2">
-      <div class="q-label">気に入った要素を教えてください</div>
-      <div class="q-note">本作では表情や目の表現に特にこだわっています。複数選択OK。</div>
-      <div class="opts grid">
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="表情の豊かさ"><span
-            class="dot box"></span>表情の豊かさ</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="目・瞳の表現"><span
-            class="dot box"></span>目・瞳の表現</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="VRの没入感"><span
-            class="dot box"></span>VRの没入感</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="キャラの可愛さ"><span
-            class="dot box"></span>キャラの可愛さ</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="モーションカスタマイズ"><span
-            class="dot box"></span>モーションカスタマイズ</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="音声・喘ぎ声"><span
-            class="dot box"></span>音声・喘ぎ声</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="キャラクターカスタマイズ性"><span
-            class="dot box"></span>キャラクターカスタマイズ性</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="fav" value="操作の手軽さ"><span
-            class="dot box"></span>操作の手軽さ</label>
+      <div class="q-label">気に入った要素をランキングしてください</div>
+      <div class="q-note">タップした順に1位、2位...と順位がつきます。もう一度タップで解除。</div>
+      <div class="opts rank-list" id="favRank">
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="表情の豊かさ"><span class="rank-num"></span>表情の豊かさ</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="目・瞳の表現"><span class="rank-num"></span>目・瞳の表現</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="VRの没入感"><span class="rank-num"></span>VRの没入感</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="キャラの可愛さ"><span class="rank-num"></span>キャラの可愛さ</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="モーションカスタマイズ"><span class="rank-num"></span>モーションカスタマイズ</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="音声・喘ぎ声"><span class="rank-num"></span>音声・喘ぎ声</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="キャラクターカスタマイズ性"><span class="rank-num"></span>キャラクターカスタマイズ性</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'fav')" data-value="操作の手軽さ"><span class="rank-num"></span>操作の手軽さ</div>
       </div>
       <input class="free-input" type="text" id="favFree" placeholder="その他に気に入った点があれば（任意）">
       <div class="btns" style="margin-top:1.2rem">
@@ -423,29 +458,20 @@
       </div>
     </div>
 
-    <!-- Step 3: 今後の要望 -->
+    <!-- Step 3: 今後の要望（ランキング上位3つ） -->
     <div class="step" id="s3">
-      <div class="q-label">今後の作品でもっと力を入れてほしい要素は？</div>
-      <div class="q-note">複数選択OK</div>
-      <div class="opts grid">
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="複数キャラ・ハーレム"><span
-            class="dot box"></span>複数キャラ・ハーレム</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="Quest単体動作"><span
-            class="dot box"></span>Quest単体で動作</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="シナリオ・ストーリー"><span
-            class="dot box"></span>シナリオ・ストーリー</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="モーション強化"><span
-            class="dot box"></span>モーション強化</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="連動デバイス強化"><span
-            class="dot box"></span>連動デバイス対応強化</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="衣装・髪型種類"><span
-            class="dot box"></span>衣装・髪型種類</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="表情・目のさらなる強化"><span
-            class="dot box"></span>表情・目のさらなる強化</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="フルボイス追加"><span
-            class="dot box"></span>フルボイス追加</label>
-        <label class="opt" onclick="check(this)"><input type="checkbox" name="want" value="パススルー追加"><span
-            class="dot box"></span>パススルー追加</label>
+      <div class="q-label">今後もっと力を入れてほしい要素は？</div>
+      <div class="q-note">特に欲しいものから順にタップ（上位3つまで）。もう一度タップで解除。</div>
+      <div class="opts rank-list" id="wantRank">
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="複数キャラ・ハーレム"><span class="rank-num"></span>複数キャラ・ハーレム</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="Quest単体動作"><span class="rank-num"></span>Quest単体で動作</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="シナリオ・ストーリー"><span class="rank-num"></span>シナリオ・ストーリー</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="モーション強化"><span class="rank-num"></span>モーション強化</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="連動デバイス強化"><span class="rank-num"></span>連動デバイス対応強化</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="衣装・髪型種類"><span class="rank-num"></span>衣装・髪型種類</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="表情・目のさらなる強化"><span class="rank-num"></span>表情・目のさらなる強化</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="フルボイス追加"><span class="rank-num"></span>フルボイス追加</div>
+        <div class="opt rank-item" onclick="toggleRank(this,'want',3)" data-value="パススルー追加"><span class="rank-num"></span>パススルー追加</div>
       </div>
 
       <hr class="sep">
@@ -550,6 +576,51 @@
       document.getElementById('toySub').style.display = v ? 'block' : 'none';
     }
 
+    // --- ランキング ---
+    const rankings = { fav: [], want: [] };
+
+    function toggleRank(el, group, maxCount) {
+      const val = el.dataset.value;
+      const idx = rankings[group].indexOf(val);
+
+      if (idx !== -1) {
+        rankings[group].splice(idx, 1);
+        el.classList.remove('ranked');
+      } else {
+        if (maxCount && rankings[group].length >= maxCount) return;
+        rankings[group].push(val);
+        el.classList.add('ranked');
+      }
+      refreshRankNums(group, maxCount);
+    }
+
+    function refreshRankNums(group, maxCount) {
+      const container = document.getElementById(group + 'Rank');
+      const items = container.querySelectorAll('.rank-item');
+      items.forEach(item => {
+        const val = item.dataset.value;
+        const pos = rankings[group].indexOf(val);
+        const numEl = item.querySelector('.rank-num');
+        if (pos !== -1) {
+          numEl.textContent = pos + 1;
+          item.classList.add('ranked');
+          item.classList.remove('maxed');
+        } else {
+          numEl.textContent = '';
+          item.classList.remove('ranked');
+          if (maxCount && rankings[group].length >= maxCount) {
+            item.classList.add('maxed');
+          } else {
+            item.classList.remove('maxed');
+          }
+        }
+      });
+    }
+
+    function getRankString(group) {
+      return rankings[group].map((v, i) => `${i + 1}:${v}`).join(', ');
+    }
+
     function getData() {
       const val = n => { const e = document.querySelector(`input[name="${n}"]:checked`); return e ? e.value : ''; };
       const vals = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e => e.value);
@@ -558,10 +629,11 @@
         toy: val('toy'),
         toyName: document.getElementById('toyName').value.trim(),
         desktop: val('desktop'),
-        favorites: vals('fav').join(', '),
-        favCount: vals('fav').length,
+        favorites: getRankString('fav'),
+        favCount: rankings.fav.length,
         favFree: document.getElementById('favFree').value.trim(),
-        wants: vals('want').join(', '),
+        wants: getRankString('want'),
+        wantCount: rankings.want.length,
         feedback: document.getElementById('feedback').value.trim(),
         hitokoto: vals('word').join(', '),
         hitokotoCount: vals('word').length,
