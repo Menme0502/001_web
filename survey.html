@@ -81,6 +81,13 @@
       margin-bottom: 0.8rem;
     }
 
+    .q-sub {
+      font-size: 0.85rem;
+      color: #a09c94;
+      margin-bottom: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
     .opts {
       display: flex;
       flex-direction: column;
@@ -416,18 +423,26 @@
 
     <!-- Step 0: 使用環境 -->
     <div class="step active" id="s0">
-      <div class="q-label">使用デバイスを教えてください</div>
+      <div class="q-label">使用環境を教えてください</div>
+
+      <div class="q-sub">VRヘッドセット</div>
       <div class="opts">
-        <label class="opt" onclick="radio(this,'device')"><input type="radio" name="device" value="Quest 3"><span
-            class="dot"></span>Meta Quest 3</label>
-        <label class="opt" onclick="radio(this,'device')"><input type="radio" name="device" value="Quest 2"><span
-            class="dot"></span>Meta Quest 2</label>
-        <label class="opt" onclick="radio(this,'device')"><input type="radio" name="device"
-            value="PCVR (Quest Link)"><span class="dot"></span>PCVR（Quest Link / Air Link）</label>
-        <label class="opt" onclick="radio(this,'device')"><input type="radio" name="device" value="PCVR (SteamVR)"><span
-            class="dot"></span>PCVR（SteamVR）</label>
-        <label class="opt" onclick="radio(this,'device')"><input type="radio" name="device" value="その他"><span
-            class="dot"></span>その他</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest 3"><span class="dot"></span>Meta Quest 3</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest 2"><span class="dot"></span>Meta Quest 2</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Quest Pro"><span class="dot"></span>Meta Quest Pro</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="Valve Index"><span class="dot"></span>Valve Index</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="HTC Vive"><span class="dot"></span>HTC Vive系</label>
+        <label class="opt" onclick="radio(this,'hmd')"><input type="radio" name="hmd" value="その他"><span class="dot"></span>その他</label>
+      </div>
+
+      <div class="q-sub">接続方式</div>
+      <div class="opts">
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Quest Link (USB)"><span class="dot"></span>Quest Link（USB接続）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Air Link"><span class="dot"></span>Air Link（ワイヤレス）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="Virtual Desktop"><span class="dot"></span>Virtual Desktop</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="SteamVR直接"><span class="dot"></span>SteamVR（PC直接接続）</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="ALVR"><span class="dot"></span>ALVR</label>
+        <label class="opt" onclick="radio(this,'conn')"><input type="radio" name="conn" value="わからない"><span class="dot"></span>よくわからない</label>
       </div>
 
       <hr class="sep">
@@ -667,8 +682,12 @@
     function getData() {
       const val = n => { const e = document.querySelector(`input[name="${n}"]:checked`); return e ? e.value : ''; };
       const vals = n => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e => e.value);
+      const hmd = val('hmd');
+      const conn = val('conn');
       return {
-        device: val('device'),
+        headset: hmd,
+        connection: conn,
+        device: [hmd, conn].filter(Boolean).join(' + '),
         toy: val('toy'),
         toyName: document.getElementById('toyName').value.trim(),
         desktop: val('desktop'),
