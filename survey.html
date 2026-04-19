@@ -503,6 +503,12 @@
       </div>
       <input class="free-input" type="text" id="wordFree" placeholder="自分の言葉で表すなら（任意）">
 
+      <hr class="sep">
+
+      <div class="q-label">ご連絡先<span style="color:#787470;font-weight:normal;font-size:0.8rem;margin-left:6px">任意</span></div>
+      <div class="q-note">特に気になるご感想をいただいた場合、詳しくお話を伺うためこちらからご連絡差し上げることがあります。ご協力いただける方はぜひ。Xアカウント（@〜）、メールアドレス、どちらでも可。</div>
+      <input class="free-input" type="text" id="contact" placeholder="例: @username / mail@example.com">
+
       <div class="btns" style="margin-top:1.2rem">
         <button class="btn btn-bk" onclick="go(3)">戻る</button>
         <button class="btn btn-go" id="sendBtn" onclick="send()">送信する</button>
@@ -638,6 +644,7 @@
         hitokoto: vals('word').join(', '),
         hitokotoCount: vals('word').length,
         hitokotoFree: document.getElementById('wordFree').value.trim(),
+        contact: document.getElementById('contact').value.trim(),
         timestamp: new Date().toISOString(),
       };
     }
