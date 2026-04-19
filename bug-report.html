@@ -98,6 +98,15 @@
 
   .sep{border:none;border-top:1px solid #222228;margin:1.8rem 0;}
 
+  .err-box{
+    display:none;background:#2a1818;border:1px solid #6a3030;border-left:3px solid #b04040;
+    border-radius:6px;padding:14px 16px;margin-bottom:1.2rem;
+    color:#e8c8c0;font-size:0.88rem;line-height:1.7;white-space:pre-wrap;
+  }
+  .err-box.show{display:block;}
+  .err-box .err-title{font-weight:600;color:#f0c0b0;margin-bottom:0.4rem;font-size:0.95rem;}
+  .err-box .err-reason{color:#b89890;font-size:0.82rem;margin-top:0.4rem;}
+
   @media(max-width:480px){
     body{padding:1.5rem 1rem;}
     .opts.row{flex-direction:column;}
@@ -222,6 +231,12 @@
       <textarea id="detail" placeholder="例: モーション切替直後に画面が真っ暗になり、5秒ほどフリーズした"></textarea>
     </div>
 
+    <div class="err-box" id="errBox">
+      <div class="err-title" id="errTitle"></div>
+      <div id="errBody"></div>
+      <div class="err-reason" id="errReason"></div>
+    </div>
+
     <div class="btns">
       <button class="btn btn-go" id="sendBtn" onclick="send()">送信する</button>
     </div>
@@ -256,27 +271,33 @@ function selUrg(el, name) {
   }
 }
 
+const MIN_INTERVAL_MS = 5 * 60 * 1000; // 5分
+
 async function send() {
+  clearError();
+
   const cat = document.querySelector('input[name="cat"]:checked');
   const urg = document.querySelector('input[name="urg"]:checked');
   const detail = document.getElementById('detail').value.trim();
 
   if (!detail) {
-    alert('内容を入力してください');
+    showError('入力が不足しています', '「内容」欄を入力してください。', '');
     return;
   }
 
-  // ハニーポット
+  // ハニーポット（botはサイレントに成功画面へ）
   const honey = document.getElementById('website').value;
   if (honey) {
     showDone();
     return;
   }
 
-  // localStorage: 連投制限（バグ報告は緩めに5分）
+  // localStorage: 5分以内の連投を事前ブロック
   const last = parseInt(localStorage.getItem('bug_sent') || '0');
-  if (Date.now() - last < 5 * 60 * 1000) {
-    alert('送信できるのは5分に1回までです');
+  const sinceLast = Date.now() - last;
+  if (last && sinceLast < MIN_INTERVAL_MS) {
+    const remainMin = Math.max(1, Math.ceil((MIN_INTERVAL_MS - sinceLast) / 60000));
+    showRateLimited(remainMin);
     return;
   }
 
@@ -302,18 +323,58 @@ async function send() {
     fp: getFingerprint(),
   };
 
-  if (CONFIG.gasEndpoint) {
-    try {
-      await fetch(CONFIG.gasEndpoint, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(data),
-      });
-      localStorage.setItem('bug_sent', Date.now());
-    } catch (e) { /* silent */ }
+  if (!CONFIG.gasEndpoint) {
+    showDone();
+    return;
   }
 
-  showDone();
+  try {
+    const res = await fetch(CONFIG.gasEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data),
+      redirect: 'follow',
+    });
+    let result = {};
+    try { result = await res.json(); } catch (_) { result = {}; }
+
+    if (result.status === 'rate_limited') {
+      const remainMin2 = Math.max(1, Math.ceil((result.retryAfterSec || 300) / 60));
+      showRateLimited(remainMin2);
+      return;
+    }
+    if (result.status && result.status !== 'ok') {
+      showError('送信に失敗しました', 'サーバーからエラー応答がありました: ' + (result.message || '不明'), '時間をおいて再度お試しください。');
+      return;
+    }
+    localStorage.setItem('bug_sent', Date.now());
+    showDone();
+  } catch (e) {
+    showError('送信できませんでした', 'ネットワークエラーが発生しました。', 'インターネット接続を確認のうえ、時間をおいて再度お試しください。');
+  }
+}
+
+function showRateLimited(remainMin) {
+  showError(
+    '送信できませんでした',
+    '同じ端末からの連続送信を制限しています。\nあと約 ' + remainMin + ' 分後に再送信できます。',
+    '（理由：スパム防止のため、短時間の連投を制限しています。複数の不具合がある場合は、恐れ入りますが1つの「内容」欄にまとめてご報告ください。入力内容は残っているので、時間をおいて「再送信する」を押せば送信できます。）'
+  );
+}
+
+function showError(title, body, reason) {
+  document.getElementById('errTitle').textContent = title;
+  document.getElementById('errBody').textContent = body || '';
+  document.getElementById('errReason').textContent = reason || '';
+  document.getElementById('errBox').classList.add('show');
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = false;
+  btn.textContent = '再送信する';
+  document.getElementById('errBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function clearError() {
+  document.getElementById('errBox').classList.remove('show');
 }
 
 function showDone() {

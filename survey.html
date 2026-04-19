@@ -254,6 +254,37 @@
       margin: 1.8rem 0;
     }
 
+    .err-box {
+      display: none;
+      background: #2a1818;
+      border: 1px solid #6a3030;
+      border-left: 3px solid #b04040;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 1.2rem;
+      color: #e8c8c0;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .err-box.show {
+      display: block;
+    }
+
+    .err-box .err-title {
+      font-weight: 600;
+      color: #f0c0b0;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .err-box .err-reason {
+      color: #b89890;
+      font-size: 0.82rem;
+      margin-top: 0.4rem;
+    }
+
     /* Result */
     .result {
       padding: 2rem 0;
@@ -509,6 +540,12 @@
       <div class="q-note">特に気になるご感想をいただいた場合、詳しくお話を伺うためこちらからご連絡差し上げることがあります。ご協力いただける方はぜひ。Xアカウント（@〜）、メールアドレス、どちらでも可。</div>
       <input class="free-input" type="text" id="contact" placeholder="例: @username / mail@example.com">
 
+      <div class="err-box" id="errBox">
+        <div class="err-title" id="errTitle"></div>
+        <div id="errBody"></div>
+        <div class="err-reason" id="errReason"></div>
+      </div>
+
       <div class="btns" style="margin-top:1.2rem">
         <button class="btn btn-bk" onclick="go(3)">戻る</button>
         <button class="btn btn-go" id="sendBtn" onclick="send()">送信する</button>
@@ -649,44 +686,87 @@
       };
     }
 
+    const MIN_INTERVAL_MS = 60 * 60 * 1000; // 1時間
+
     async function send() {
+      clearError();
       const btn = document.getElementById('sendBtn');
       btn.disabled = true;
       btn.textContent = '送信中...';
 
       const data = getData();
 
-      // ハニーポット: botは非表示フィールドを埋めてしまう
+      // ハニーポット: botは非表示フィールドを埋めてしまう（サイレントに成功表示）
       const honey = document.getElementById('website').value;
       if (honey) {
-        // botと判定 → 送信せず成功表示
         showResult(data);
         return;
       }
 
-      // localStorage: 同じブラウザから1時間以内の再送信を防止
+      // localStorage: 同一端末からの1時間以内の再送信を事前ブロック
       var lastSent = parseInt(localStorage.getItem('survey_sent') || '0');
-      if (Date.now() - lastSent < 60 * 60 * 1000) {
-        showResult(data);
+      var sinceLast = Date.now() - lastSent;
+      if (lastSent && sinceLast < MIN_INTERVAL_MS) {
+        var remainMin = Math.max(1, Math.ceil((MIN_INTERVAL_MS - sinceLast) / 60000));
+        showRateLimited(remainMin);
         return;
       }
 
       // フィンガープリント: サーバー側の時間制限用
       data.fp = getFingerprint();
 
-      if (CONFIG.gasEndpoint) {
-        try {
-          await fetch(CONFIG.gasEndpoint, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(data),
-          });
-          localStorage.setItem('survey_sent', Date.now());
-        } catch (e) { /* silent */ }
+      if (!CONFIG.gasEndpoint) {
+        showResult(data);
+        return;
       }
 
-      showResult(data);
+      try {
+        const res = await fetch(CONFIG.gasEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(data),
+          redirect: 'follow',
+        });
+        let result = {};
+        try { result = await res.json(); } catch (_) { result = {}; }
+
+        if (result.status === 'rate_limited') {
+          var remainMin2 = Math.max(1, Math.ceil((result.retryAfterSec || 3600) / 60));
+          showRateLimited(remainMin2);
+          return;
+        }
+        if (result.status && result.status !== 'ok') {
+          showError('送信に失敗しました', 'サーバーからエラー応答がありました: ' + (result.message || '不明'), '時間をおいて再度お試しください。');
+          return;
+        }
+        localStorage.setItem('survey_sent', Date.now());
+        showResult(data);
+      } catch (e) {
+        showError('送信できませんでした', 'ネットワークエラーが発生しました。', 'インターネット接続を確認のうえ、時間をおいて再度お試しください。');
+      }
+    }
+
+    function showRateLimited(remainMin) {
+      showError(
+        '送信できませんでした',
+        '同じ端末からの連続送信を制限しています。\nあと約 ' + remainMin + ' 分後に再度お試しください。',
+        '（理由：集計の偏りを防ぐため、同じ方からの複数回答は1件として扱っています。まだ入力内容は残っているので、時間をおいて「送信する」を押せば送信できます。）'
+      );
+    }
+
+    function showError(title, body, reason) {
+      document.getElementById('errTitle').textContent = title;
+      document.getElementById('errBody').textContent = body || '';
+      document.getElementById('errReason').textContent = reason || '';
+      document.getElementById('errBox').classList.add('show');
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = false;
+      btn.textContent = '再送信する';
+      document.getElementById('errBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function clearError() {
+      document.getElementById('errBox').classList.remove('show');
     }
 
     function showResult(data) {
