@@ -788,15 +788,24 @@
       }
     }
 
+    // 端末識別子: localStorage初回生成UUID。衝突回避のため環境ハッシュは使わない。
     function getFingerprint() {
-      const s = navigator.userAgent + '|' + screen.width + 'x' + screen.height + '|' +
-                new Date().getTimezoneOffset() + '|' + navigator.language;
-      let h = 0;
-      for (let i = 0; i < s.length; i++) {
-        h = ((h << 5) - h) + s.charCodeAt(i);
-        h |= 0;
+      var id = localStorage.getItem('device_id');
+      if (!id) {
+        id = generateUUID();
+        try { localStorage.setItem('device_id', id); } catch (_) { /* private mode等 */ }
       }
-      return h.toString(36);
+      return id;
+    }
+
+    function generateUUID() {
+      if (window.crypto && typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID();
+      }
+      // fallback: 16バイト乱数をhex化
+      var arr = new Uint8Array(16);
+      (window.crypto || window.msCrypto).getRandomValues(arr);
+      return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
     }
   </script>
 </body>
