@@ -98,6 +98,54 @@
 
   .sep{border:none;border-top:1px solid #222228;margin:1.8rem 0;}
 
+  /* 上部通知バナー（読まないで送ってくる問題対策） */
+  .top-notice{
+    display:block;background:linear-gradient(135deg,#2e2a1a 0%,#3a3a1f 100%);
+    border:2px solid #d4a94e;border-left:6px solid #e8b856;
+    border-radius:8px;padding:14px 18px;margin-bottom:0.8rem;
+    text-decoration:none;transition:background 0.2s,border-color 0.2s;
+  }
+  .top-notice:hover{
+    background:linear-gradient(135deg,#3e3824 0%,#4a4a28 100%);
+    border-color:#eec06a;
+  }
+  .top-notice .tn-label{
+    font-size:0.78rem;color:#e8b856;font-weight:700;
+    letter-spacing:0.04em;margin-bottom:0.3rem;
+  }
+  .top-notice .tn-title{
+    font-size:1.02rem;color:#f0e4c8;font-weight:600;margin-bottom:0.2rem;
+  }
+  .top-notice .tn-sub{
+    font-size:0.78rem;color:#c8b8a0;
+  }
+  .top-notice .tn-cta{
+    display:inline-block;margin-top:10px;
+    background:#e8b856;color:#2a1c00;font-weight:700;font-size:0.9rem;
+    padding:9px 16px;border-radius:6px;letter-spacing:0.02em;
+    box-shadow:0 2px 0 #8a6826;
+  }
+  .top-notice:hover .tn-cta{
+    background:#f4c972;box-shadow:0 2px 0 #8a6826;
+  }
+  .top-notice.danger{
+    background:linear-gradient(135deg,#3a1e1a 0%,#4a201c 100%);
+    border-color:#d47060;border-left-color:#e88676;
+  }
+  .top-notice.danger:hover{
+    background:linear-gradient(135deg,#4a2a24 0%,#5a2824 100%);
+    border-color:#e88676;
+  }
+  .top-notice.danger .tn-label{color:#e88676;}
+  .top-notice.danger .tn-title{color:#f4d8c8;}
+  .top-notice.danger .tn-sub{color:#d8b0a0;}
+  .top-notice.danger .tn-cta{
+    background:#e88676;color:#2a0d08;box-shadow:0 2px 0 #8c4038;
+  }
+  .top-notice.danger:hover .tn-cta{
+    background:#f4a090;box-shadow:0 2px 0 #8c4038;
+  }
+
   .err-box{
     display:none;background:#2a1818;border:1px solid #6a3030;border-left:3px solid #b04040;
     border-radius:6px;padding:14px 16px;margin-bottom:1.2rem;
@@ -119,8 +167,22 @@
 
 <div class="wrap">
 
+  <a href="https://www.notion.so/3467f34a372a80de9c20cfe180093a35" target="_blank" rel="noopener" class="top-notice danger">
+    <div class="tn-label">⚠ 報告前に必ずご確認ください ⚠</div>
+    <div class="tn-title">「起動できない」系の症状は、多くがこのページで解決します</div>
+    <div class="tn-sub">よくある起動トラブルと対処法をまとめたNotionページです。</div>
+    <div class="tn-cta">▶ ここを押してトラブル対処ページを開く</div>
+  </a>
+
+  <a href="https://www.notion.so/3417f34a372a8002b20acd5c51e79f90" target="_blank" rel="noopener" class="top-notice">
+    <div class="tn-label">★ 操作方法・最新の不具合対処はこちら ★</div>
+    <div class="tn-title">操作マニュアル & 既知の不具合と対処一覧</div>
+    <div class="tn-sub">報告したい内容が既に対処法と共に載っている場合があります。</div>
+    <div class="tn-cta">▶ ここを押して操作・対処ページを開く</div>
+  </a>
+
   <h1>バグ報告</h1>
-  <p class="lead">不具合を見つけた場合はこちらからご報告ください。修正の参考にさせていただきます。</p>
+  <p class="lead">上記ページで解決しない場合は、こちらから詳細をご報告ください。</p>
   <p class="lead" style="color:#a89880;border-left:2px solid #8a7a60;padding-left:10px;margin-bottom:2rem">
     <strong>複数の不具合をまとめて報告</strong>してください。短時間に連続で送信した場合、後から送信した内容が反映されないことがあります（スパム対策のため）。<br>
     複数件ある場合は1回の送信内容に箇条書きでまとめるか、5分以上空けてから送信してください。

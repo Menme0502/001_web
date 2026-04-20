@@ -261,6 +261,56 @@
       margin: 1.8rem 0;
     }
 
+    /* 上部通知バナー（操作方法・最新情報への誘導） */
+    .top-notice {
+      display: block;
+      background: linear-gradient(135deg, #2e2a1a 0%, #3a3a1f 100%);
+      border: 2px solid #d4a94e;
+      border-left: 6px solid #e8b856;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 1rem;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .top-notice:hover {
+      background: linear-gradient(135deg, #3e3824 0%, #4a4a28 100%);
+      border-color: #eec06a;
+    }
+    .top-notice .tn-label {
+      font-size: 0.78rem;
+      color: #e8b856;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+    .top-notice .tn-title {
+      font-size: 1.02rem;
+      color: #f0e4c8;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .top-notice .tn-sub {
+      font-size: 0.78rem;
+      color: #c8b8a0;
+    }
+    .top-notice .tn-cta {
+      display: inline-block;
+      margin-top: 10px;
+      background: #e8b856;
+      color: #2a1c00;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 9px 16px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+      box-shadow: 0 2px 0 #8a6826;
+    }
+    .top-notice:hover .tn-cta {
+      background: #f4c972;
+      box-shadow: 0 2px 0 #8a6826;
+    }
+
     .sat-grid {
       display: grid;
       grid-template-columns: repeat(11, 1fr);
@@ -474,6 +524,13 @@
     style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
 
   <div class="wrap">
+
+    <a href="https://www.notion.so/3417f34a372a8002b20acd5c51e79f90" target="_blank" rel="noopener" class="top-notice">
+      <div class="tn-label">★ 操作方法・最新の不具合対処はこちら ★</div>
+      <div class="tn-title">操作マニュアル & 既知の不具合と対処一覧</div>
+      <div class="tn-sub">ご意見やご要望を送る前に、一度ご覧ください。</div>
+      <div class="tn-cta">▶ ここを押して操作・対処ページを開く</div>
+    </a>
 
     <h1>精密少女シミュレーター</h1>
     <p class="lead">ご購入ありがとうございます。今後の開発に活かすため、簡単なアンケートにご協力ください。</p>
