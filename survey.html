@@ -261,6 +261,71 @@
       margin: 1.8rem 0;
     }
 
+    .sat-grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 4px;
+      margin-bottom: 0.6rem;
+    }
+
+    .sat-btn {
+      padding: 10px 0;
+      background: #1a1a20;
+      border: 1px solid #26262e;
+      border-radius: 6px;
+      color: #ccc8c0;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .sat-btn:hover {
+      border-color: #3a3a44;
+    }
+
+    .sat-btn.on {
+      border-color: #a09070;
+      background: #26221c;
+      color: #f0e8d8;
+    }
+
+    .sat-endpoints {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #787470;
+      margin-bottom: 1.4rem;
+      padding: 0 2px;
+    }
+
+    .sat-message {
+      background: #1a1d24;
+      border-left: 3px solid #8a7a60;
+      border-radius: 4px;
+      padding: 12px 14px;
+      margin: 0.8rem 0 0.8rem;
+      font-size: 0.88rem;
+      color: #d8d4cc;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .sat-message.apology {
+      border-left-color: #b07060;
+      background: #221818;
+    }
+
+    @media (max-width: 480px) {
+      .sat-grid {
+        gap: 3px;
+      }
+      .sat-btn {
+        padding: 8px 0;
+        font-size: 0.82rem;
+      }
+    }
+
     .err-box {
       display: none;
       background: #2a1818;
@@ -419,6 +484,7 @@
       <span id="p2"></span>
       <span id="p3"></span>
       <span id="p4"></span>
+      <span id="p5"></span>
     </div>
 
     <!-- Step 0: 使用環境 -->
@@ -522,8 +588,8 @@
 
       <hr class="sep">
 
-      <div class="q-label">その他ご意見・ご要望</div>
-      <div class="q-note">具体的に書いていただけると開発の参考になります。<br>例：「○○の操作が欲しい」「こんなシステムがあったら嬉しい」「○○の機能を強化してほしい」「こういう体位・シチュエーションが欲しい」「UI・操作感でこうだったら嬉しい」など、細かい要望ほど助かります。</div>
+      <div class="q-label">その他追加要望<span style="color:#787470;font-weight:normal;font-size:0.8rem;margin-left:6px">任意</span></div>
+      <div class="q-note">ランキングにない「こうだったら嬉しい」要素があればぜひ。<br>例：「○○の操作が欲しい」「こんなシステムがあったら嬉しい」「○○の機能を強化してほしい」「こういう体位・シチュエーションが欲しい」「UI・操作感でこうだったら嬉しい」など、細かい要望ほど助かります。</div>
       <textarea id="feedback" placeholder="自由にお書きください（任意）"></textarea>
 
       <div class="btns">
@@ -556,6 +622,41 @@
       <div class="q-note">特に気になるご感想をいただいた場合、詳しくお話を伺うためこちらからご連絡差し上げることがあります。ご協力いただける方はぜひ。Xアカウント（@〜）、メールアドレス、どちらでも可。</div>
       <input class="free-input" type="text" id="contact" placeholder="例: @username / mail@example.com">
 
+      <div class="btns" style="margin-top:1.2rem">
+        <button class="btn btn-bk" onclick="go(3)">戻る</button>
+        <button class="btn btn-go" onclick="go(5)">次へ</button>
+      </div>
+    </div>
+
+    <!-- Step 5: 満足度 + 不満点（NPSゲート） -->
+    <div class="step" id="s5">
+      <div class="q-label">本作にどれくらいご満足いただけましたか？</div>
+      <div class="q-note">0〜10点でお選びください（10点 = 最高に満足）</div>
+      <div class="sat-grid">
+        <button class="sat-btn" data-score="0" onclick="selectSat(this)">0</button>
+        <button class="sat-btn" data-score="1" onclick="selectSat(this)">1</button>
+        <button class="sat-btn" data-score="2" onclick="selectSat(this)">2</button>
+        <button class="sat-btn" data-score="3" onclick="selectSat(this)">3</button>
+        <button class="sat-btn" data-score="4" onclick="selectSat(this)">4</button>
+        <button class="sat-btn" data-score="5" onclick="selectSat(this)">5</button>
+        <button class="sat-btn" data-score="6" onclick="selectSat(this)">6</button>
+        <button class="sat-btn" data-score="7" onclick="selectSat(this)">7</button>
+        <button class="sat-btn" data-score="8" onclick="selectSat(this)">8</button>
+        <button class="sat-btn" data-score="9" onclick="selectSat(this)">9</button>
+        <button class="sat-btn" data-score="10" onclick="selectSat(this)">10</button>
+      </div>
+      <div class="sat-endpoints">
+        <span>不満</span>
+        <span>最高に満足</span>
+      </div>
+
+      <div id="satMessageBox"></div>
+
+      <div id="satDissatBlock" style="display:none">
+        <div class="q-label" id="dissatLabel">不満点を教えてください<span style="color:#787470;font-weight:normal;font-size:0.8rem;margin-left:6px">任意</span></div>
+        <textarea id="dissatisfaction" placeholder="どんな細かい点でも結構です。できる限り対応いたします。"></textarea>
+      </div>
+
       <div class="err-box" id="errBox">
         <div class="err-title" id="errTitle"></div>
         <div id="errBody"></div>
@@ -563,27 +664,54 @@
       </div>
 
       <div class="btns" style="margin-top:1.2rem">
-        <button class="btn btn-bk" onclick="go(3)">戻る</button>
-        <button class="btn btn-go" id="sendBtn" onclick="send()">送信する</button>
+        <button class="btn btn-bk" onclick="go(4)">戻る</button>
+        <button class="btn btn-go" id="sendBtn" onclick="send()" disabled>送信する</button>
       </div>
     </div>
 
-    <!-- Result: ポジティブ → レビュー誘導 + バグ報告リンク -->
+    <!-- Result: ポジティブ(10点) → レビュー誘導 + バグ報告リンク -->
     <div class="step" id="sPos">
       <div class="result">
-        <h2>ご協力ありがとうございます</h2>
+        <h2>ご協力ありがとうございます！</h2>
         <div class="msg">
-          あなたの声が、次の作品づくりの指針になります。<br>
+          満足していただけて何よりです。<br>
           もしよろしければ、DLsiteにてレビューをいただけると<br>
           開発の大きな励みになります。
         </div>
-        <a href="#REVIEW_URL" id="revLink" class="link-primary" target="_blank" rel="noopener">レビューを書く</a>
+
+        <div style="background:#1a1d24;border-radius:6px;padding:14px 16px;margin:1rem 0;text-align:left;font-size:0.85rem;color:#c8c4bc;line-height:1.8">
+          <div style="color:#a09070;font-size:0.82rem;margin-bottom:0.5rem">レビュー記入例（15文字程度からOK）</div>
+          <div>・「○○の表現がすごく良かった」</div>
+          <div>・「○○の部分が気に入りました。特に〜」</div>
+          <div>・「次回作も期待しています。○○があったら嬉しい」</div>
+          <div style="color:#787470;font-size:0.78rem;margin-top:0.6rem">短い一言だけでも、作者にとって大きな励みになります。</div>
+        </div>
+
+        <a href="#REVIEW_URL" id="revLink" class="link-primary" target="_blank" rel="noopener">DLsiteでレビューを書く</a>
         <br>
         <a href="bug-report.html" class="link-secondary" target="_blank">不具合を見つけた方はこちら</a>
       </div>
     </div>
 
-    <!-- Result: ニュートラル → バグ報告メインリンク -->
+    <!-- Result: 中間(7-9点) → 改善誘導・レビュー後回し戦術 -->
+    <div class="step" id="sMid">
+      <div class="result">
+        <h2>ご協力ありがとうございます</h2>
+        <div class="msg">
+          不満点を教えてください。<br>
+          教えてくださればその不満を尽く解決し、<br>
+          今度こそあなたに<strong>【満足】</strong>して頂きます！<br>
+          <br>
+          もしよろしければ、アップデートで改善された後に<br>
+          レビューを書いていただけると嬉しいです。
+        </div>
+        <a href="bug-report.html" class="link-primary" target="_blank">ご不満・不具合の詳細報告はこちら</a>
+        <br>
+        <a href="#REVIEW_URL" id="revLinkMid" class="link-secondary" target="_blank" rel="noopener">今すぐレビューを書く方はこちら</a>
+      </div>
+    </div>
+
+    <!-- Result: ニュートラル(0-6点) → バグ報告メインリンク -->
     <div class="step" id="sNeu">
       <div class="result">
         <h2>ご協力ありがとうございます</h2>
@@ -609,7 +737,7 @@
     function show(n) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('s' + n).classList.add('active');
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 6; i++) {
         document.getElementById('p' + i).className = i <= n ? 'on' : '';
       }
       cur = n;
@@ -633,6 +761,38 @@
 
     function toggleSub(v) {
       document.getElementById('toySub').style.display = v ? 'block' : 'none';
+    }
+
+    // --- 満足度（NPS） ---
+    let satisfaction = null;
+
+    function selectSat(btn) {
+      const score = parseInt(btn.dataset.score, 10);
+      satisfaction = score;
+      document.querySelectorAll('.sat-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+
+      const msgBox = document.getElementById('satMessageBox');
+      const dissatBlock = document.getElementById('satDissatBlock');
+      const dissatLabel = document.getElementById('dissatLabel');
+      const dissatArea = document.getElementById('dissatisfaction');
+
+      if (score >= 10) {
+        msgBox.innerHTML = '<div class="sat-message">最高の評価をありがとうございます！送信後にDLsiteレビューのご案内をいたします。</div>';
+        dissatBlock.style.display = 'none';
+      } else if (score >= 7) {
+        msgBox.innerHTML = '<div class="sat-message">もう一歩ですね。<br>不満点を教えてくだされば、その不満を尽く解決し、今度こそあなたに<strong>【満足】</strong>して頂きます！</div>';
+        dissatLabel.innerHTML = '不満点を教えてください<span style="color:#787470;font-weight:normal;font-size:0.8rem;margin-left:6px">任意</span>';
+        dissatArea.placeholder = 'どんな細かい点でも結構です。必ず改善に活かします。';
+        dissatBlock.style.display = 'block';
+      } else {
+        msgBox.innerHTML = '<div class="sat-message apology">ご期待に沿えず申し訳ございません。<br>どの点が気に入らなかったか教えていただければ、必ず改善いたします。</div>';
+        dissatLabel.innerHTML = '気に入らなかった点を教えてください<span style="color:#787470;font-weight:normal;font-size:0.8rem;margin-left:6px">任意</span>';
+        dissatArea.placeholder = '具体的にご記入いただけると改善の参考になります。';
+        dissatBlock.style.display = 'block';
+      }
+
+      document.getElementById('sendBtn').disabled = false;
     }
 
     // --- ランキング ---
@@ -702,6 +862,8 @@
         hitokotoCount: vals('word').length,
         hitokotoFree: document.getElementById('wordFree').value.trim(),
         contact: document.getElementById('contact').value.trim(),
+        satisfaction: (satisfaction === null ? '' : satisfaction),
+        dissatisfaction: document.getElementById('dissatisfaction').value.trim(),
         timestamp: new Date().toISOString(),
       };
     }
@@ -790,19 +952,24 @@
     }
 
     function showResult(data) {
-      // 判定: ポジティブ条件
-      //  - 気に入った要素 2つ以上
-      //  - 気に入った自由記述あり
-      //  - 一言選択肢 1つ以上
-      const positive = data.favCount >= 2 || data.favFree.length > 0 || data.hitokotoCount >= 1;
+      // 満足度スコアで分岐:
+      //   10点 → sPos（DLsiteレビュー直接誘導）
+      //   7-9点 → sMid（不満解消誘導・レビュー後回し戦術）
+      //   0-6点 → sNeu（バグ報告メイン）
+      //   未入力（honeypot経由） → sPos（botサイレント処理）
+      const score = (typeof data.satisfaction === 'number') ? data.satisfaction : -1;
 
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.querySelector('.prog').style.display = 'none';
 
-      if (positive) {
+      if (score >= 10 || score === -1) {
         const link = document.getElementById('revLink');
         if (CONFIG.reviewUrl !== '#REVIEW_URL') link.href = CONFIG.reviewUrl;
         document.getElementById('sPos').classList.add('active');
+      } else if (score >= 7) {
+        const link = document.getElementById('revLinkMid');
+        if (CONFIG.reviewUrl !== '#REVIEW_URL') link.href = CONFIG.reviewUrl;
+        document.getElementById('sMid').classList.add('active');
       } else {
         document.getElementById('sNeu').classList.add('active');
       }
