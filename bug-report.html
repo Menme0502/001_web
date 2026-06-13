@@ -314,6 +314,7 @@
 <script>
 const CONFIG = {
   gasEndpoint: 'https://script.google.com/macros/s/AKfycbwc5tiA6oiUVxqIOe3iePP9n1pNvZ33QzJj5RYYq34yQeN-DLEAkaynVb1I2KJKddI4EA/exec',
+  gameVersion: 'v1.0.3', // リリース毎に更新。送信データに付与しスプシで集計
 };
 
 function radio(el, name) {
@@ -380,6 +381,7 @@ async function send() {
     category: cat ? cat.value : '未選択',
     urgency: urg ? urg.value : '未選択',
     detail: detail,
+    gameVersion: CONFIG.gameVersion,
     timestamp: new Date().toISOString(),
     userAgent: navigator.userAgent,
     fp: getFingerprint(),

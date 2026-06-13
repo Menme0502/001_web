@@ -787,6 +787,7 @@
     const CONFIG = {
       reviewUrl: 'https://www.dlsite.com/maniax/work/=/product_id/RJ01599387.html',
       gasEndpoint: 'https://script.google.com/macros/s/AKfycbwc5tiA6oiUVxqIOe3iePP9n1pNvZ33QzJj5RYYq34yQeN-DLEAkaynVb1I2KJKddI4EA/exec',
+      gameVersion: 'v1.0.3', // リリース毎に更新。送信データに付与しスプシで集計
     };
 
     let cur = 0;
@@ -921,6 +922,7 @@
         contact: document.getElementById('contact').value.trim(),
         satisfaction: (satisfaction === null ? '' : satisfaction),
         dissatisfaction: document.getElementById('dissatisfaction').value.trim(),
+        gameVersion: CONFIG.gameVersion,
         timestamp: new Date().toISOString(),
       };
     }
